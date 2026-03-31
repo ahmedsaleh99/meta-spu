@@ -12,6 +12,8 @@ MENDER_STORAGE_DEVICE ?= "/dev/mmcblk0"
 MENDER_BOOT_PART_SIZE_MB ?= "256"
 MENDER_DATA_PART_SIZE_MB ?= "512"
 LICENSE_FLAGS_ACCEPTED:append = " synaptics-killswitch"
+LICENSE_FLAGS_ACCEPTED:append = " commercial"
+
 
 SPU_USER ?= "spu-user"
 SPU_INSTALL_DIR ?= "/home/${SPU_USER}/step-spu"
