@@ -11,7 +11,25 @@ This layer depends on:
 - **poky** – the Yocto Project reference distribution  
 - **meta-openembedded** – a collection of additional OpenEmbedded layers
 
-Refer to the [Yocto Project documentation](https://docs.yoctoproject.org/) for compatible release versions.
+## Supported Release Series
+
+- `scarthgap`
+
+## Provided Recipes
+
+- Image: `step-spu-image`
+- Packagegroup: `packagegroup-step-spu`
+- App payload: `step-spu`
+- System config: `step-spu-config`
+- Kiosk tweaks: `step-spu-kiosk-tweaks`
+
+## Notes
+
+- `step-spu` currently stages application payload from `SPU_PROJECT_DIR` during `do_install`.
+  Override `SPU_PROJECT_DIR` in your build configuration to point to the desired source tree.
+- Wi-Fi seed values can be controlled with:
+  - `SPU_WIFI_SSID`
+  - `SPU_WIFI_PSK`
 
 ## Getting Started
 
@@ -70,3 +88,8 @@ Contributions are welcome. Please open an issue or submit a pull request on the 
 ## License
 
 This layer is provided under the terms described in the [LICENSE](LICENSE) file.
+
+
+## Maintainers
+
+- STEP-SPU Team

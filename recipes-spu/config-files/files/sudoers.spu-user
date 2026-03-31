@@ -1,0 +1,11 @@
+# Allow user to run specific commands with sudo without password
+$SPU_USER ALL=(root) NOPASSWD: /sbin/reboot
+$SPU_USER ALL=(root) NOPASSWD: /sbin/shutdown
+$SPU_USER ALL=(root) NOPASSWD: /usr/bin/nmcli
+$SPU_USER ALL=(root) NOPASSWD: /usr/bin/flashrom
+$SPU_USER ALL=(root) NOPASSWD: /usr/bin/growpart
+$SPU_USER ALL=(root) NOPASSWD: /usr/bin/udevadm
+$SPU_USER ALL=(root) NOPASSWD: /usr/bin/lsblk
+$SPU_USER ALL=(root) NOPASSWD: /usr/sbin/resize2fs
+$SPU_USER ALL=(root) NOPASSWD: /usr/sbin/partprobe
+$SPU_USER ALL=(root) NOPASSWD: /home/$SPU_USER/step-spu/scripts/first_run.sh
