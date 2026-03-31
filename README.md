@@ -25,8 +25,10 @@ This layer depends on:
 
 ## Notes
 
-- `step-spu` currently stages application payload from `SPU_PROJECT_DIR` during `do_install`.
-  Override `SPU_PROJECT_DIR` in your build configuration to point to the desired source tree.
+- `step-spu` fetches application payload from:
+  - `https://github.com/ahmedsaleh99/STEP-SPU` (`main` branch)
+- The recipe pins a commit with `SRCREV` for reproducible builds.
+  Update `SRCREV` in `recipes-spu/step-spu/step-spu.bb` when you want a newer app revision.
 - Wi-Fi seed values can be controlled with:
   - `SPU_WIFI_SSID`
   - `SPU_WIFI_PSK`
