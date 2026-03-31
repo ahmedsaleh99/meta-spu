@@ -6,17 +6,20 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI = " \
+    git://github.com/ahmedsaleh99/STEP-SPU.git;branch=main;protocol=https \
     file://launch_app.sh \
     file://first_run.sh \
     file://step-spu.service.in \
     file://xorg.service.in \
 "
 
-S = "${WORKDIR}"
+SRCREV = "0f90b77711870e27fc33eba65d881dd9bfdad722"
+PV = "1.0+git${SRCPV}"
+
+S = "${WORKDIR}/git"
 
 SPU_USER ?= "spu-user"
 SPU_INSTALL_DIR ?= "/home/${SPU_USER}/step-spu"
-SPU_PROJECT_DIR ?= "/home/cvip/Work/STEP-SPU"
 
 inherit systemd
 inherit useradd
@@ -34,8 +37,8 @@ do_install() {
     install -d ${D}${SPU_INSTALL_DIR}/scripts
     install -d ${D}${sysconfdir}/systemd/system
 
-    cp -r ${SPU_PROJECT_DIR}/src/* ${D}${SPU_INSTALL_DIR}/src/
-    cp -r ${SPU_PROJECT_DIR}/resources/* ${D}${SPU_INSTALL_DIR}/resources/
+    cp -r ${S}/src/* ${D}${SPU_INSTALL_DIR}/src/
+    cp -r ${S}/resources/* ${D}${SPU_INSTALL_DIR}/resources/
 
     install -m 0755 ${WORKDIR}/launch_app.sh ${D}${SPU_INSTALL_DIR}/scripts/launch_app.sh
     install -m 0755 ${WORKDIR}/first_run.sh ${D}${SPU_INSTALL_DIR}/scripts/first_run.sh
