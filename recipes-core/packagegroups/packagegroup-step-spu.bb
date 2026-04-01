@@ -24,6 +24,7 @@ RDEPENDS:${PN} = " \
     python3 \
     python3-core \
     python3-cryptography \
+    python3-depthai \
     python3-numpy \
     python3-opencv \
     python3-pip \
