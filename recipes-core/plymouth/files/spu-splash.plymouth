@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=SPU Splash
+Description=An SPU themed splash screen
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/spu-splash/
+ScriptFile=/usr/share/plymouth/themes/spu-splash/spu-splash.script

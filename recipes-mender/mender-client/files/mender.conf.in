@@ -1,5 +1,0 @@
-{
-  "ServerURL": "__MENDER_SERVER_URL__",
-  "UpdatePollIntervalSeconds": 1800,
-  "InventoryPollIntervalSeconds": 28800
-}
