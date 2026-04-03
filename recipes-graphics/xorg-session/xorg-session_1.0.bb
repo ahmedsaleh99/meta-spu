@@ -12,7 +12,22 @@ S = "${WORKDIR}"
 
 SPU_USER ?= "root"
 
-RDEPENDS:${PN} += "xserver-xorg"
+RDEPENDS:${PN} += " \
+    xserver-xorg \
+    xserver-xorg-extension-glx \
+    xf86-video-modesetting \
+    xf86-video-fbdev \
+    xinit \
+    xauth \
+    xinput \
+    xset \
+    xrandr \
+    xf86-input-libinput \
+    libinput \
+    libevdev \
+    mesa \
+    xcb-util-cursor \
+"
 
 SYSTEMD_SERVICE:${PN} = "xorg.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "enable"
