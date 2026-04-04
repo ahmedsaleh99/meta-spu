@@ -1,0 +1,31 @@
+From 0d59f1a5de4f5dc89d7b5a55e4f68a900711d716 Mon Sep 17 00:00:00 2001
+From: STEP-SPU Build Fix <buildfix@local>
+Date: Sat, 4 Apr 2026 10:30:00 +0000
+Subject: [PATCH] cmake: only require httplib when remote connection is enabled
+
+When DEPTHAI_ENABLE_REMOTE_CONNECTION=OFF (as set in Yocto), depthai-core
+still unconditionally required httplib in config mode, which breaks
+cross-builds where no cpp-httplib CMake package is provided.
+
+Make httplib discovery conditional on remote connection support.
+---
+ cmake/depthaiDependencies.cmake | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/cmake/depthaiDependencies.cmake b/cmake/depthaiDependencies.cmake
+index 1111111..2222222 100644
+--- a/cmake/depthaiDependencies.cmake
++++ b/cmake/depthaiDependencies.cmake
+@@ -49,7 +49,9 @@ if(NOT DEPTHAI_ENABLE_LIBNOP)
+	find_package(LibArchive ${_QUIET}  REQUIRED)
+	find_package(liblzma ${_QUIET} CONFIG REQUIRED)
+	# httplib for Gate communication
+-    find_package(httplib ${_QUIET} CONFIG REQUIRED)
++    if(DEPTHAI_ENABLE_REMOTE_CONNECTION)
++        find_package(httplib ${_QUIET} CONFIG REQUIRED)
++    endif()
+	# ZLIB for compressing Apps
+	find_package(ZLIB REQUIRED)
+	find_package(Eigen3 ${_QUIET} CONFIG REQUIRED)
+-- 
+2.34.1
