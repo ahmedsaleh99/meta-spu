@@ -1,41 +1,49 @@
-SUMMARY = "Header-only xtensor library with CMake package config"
+SUMMARY = "Multi-dimensional arrays with broadcasting and lazy computing"
 HOMEPAGE = "https://github.com/luxonis/xtensor"
-LICENSE = "CLOSED"
+LICENSE = "BSD-3-Clause"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=5c67ec4d3eb9c5b7eed4c37e69571b93"
 
 SRC_URI = "git://github.com/luxonis/xtensor.git;protocol=https;branch=master"
 SRCREV = "d070cfcba9418ec45e5399708100eee1181a9573"
 
+PV = "0.26.0+git${SRCPV}"
 S = "${WORKDIR}/git"
 
-inherit allarch
-
-DEPENDS = "xtl xsimd"
+DEPENDS += "xtl"
 
 do_install() {
-    install -d ${D}${includedir}/xtensor
-    cp -R ${S}/include/xtensor/* ${D}${includedir}/xtensor/
+    install -d ${D}${includedir}
+    cp -r ${S}/include/* ${D}${includedir}/
 
     install -d ${D}${libdir}/cmake/xtensor
-    cat > ${D}${libdir}/cmake/xtensor/xtensorConfig.cmake << 'EOF'
+    cat > ${D}${libdir}/cmake/xtensor/xtensorConfig.cmake <<'EOF'
+include(CMakeFindDependencyMacro)
+find_dependency(xtl 0.7.0 CONFIG)
+
+get_filename_component(PACKAGE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}/../../.." ABSOLUTE)
+
+set(XTENSOR_VERSION_MAJOR 0)
+set(XTENSOR_VERSION_MINOR 26)
+set(XTENSOR_VERSION_PATCH 0)
+set(xtensor_VERSION "${XTENSOR_VERSION_MAJOR}.${XTENSOR_VERSION_MINOR}.${XTENSOR_VERSION_PATCH}")
+
 if(NOT TARGET xtensor)
     add_library(xtensor INTERFACE IMPORTED)
-    get_filename_component(_XTENSOR_PREFIX "${CMAKE_CURRENT_LIST_DIR}/../../.." ABSOLUTE)
     set_target_properties(xtensor PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${_XTENSOR_PREFIX}/include"
+        INTERFACE_INCLUDE_DIRECTORIES "${PACKAGE_PREFIX_DIR}/include"
+        INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${PACKAGE_PREFIX_DIR}/include"
+        INTERFACE_COMPILE_FEATURES "cxx_std_14"
+        INTERFACE_LINK_LIBRARIES "xtl"
     )
 endif()
-if(NOT TARGET xtensor::xtensor)
-    add_library(xtensor::xtensor INTERFACE IMPORTED)
-    set_target_properties(xtensor::xtensor PROPERTIES
-        INTERFACE_LINK_LIBRARIES "xtensor"
-    )
-endif()
+
+set(xtensor_INCLUDE_DIRS "${PACKAGE_PREFIX_DIR}/include")
 EOF
 
-    cat > ${D}${libdir}/cmake/xtensor/xtensorConfigVersion.cmake << 'EOF'
+    cat > ${D}${libdir}/cmake/xtensor/xtensorConfigVersion.cmake <<'EOF'
 set(PACKAGE_VERSION "0.26.0")
 
-if(PACKAGE_FIND_VERSION VERSION_GREATER PACKAGE_VERSION)
+if(PACKAGE_VERSION VERSION_LESS PACKAGE_FIND_VERSION)
     set(PACKAGE_VERSION_COMPATIBLE FALSE)
 else()
     set(PACKAGE_VERSION_COMPATIBLE TRUE)
@@ -49,4 +57,8 @@ EOF
 }
 
 ALLOW_EMPTY:${PN} = "1"
-FILES:${PN}-dev += " ${includedir}/xtensor ${libdir}/cmake/xtensor"
+
+FILES:${PN}-dev += " \
+    ${includedir} \
+    ${libdir}/cmake/xtensor \
+"

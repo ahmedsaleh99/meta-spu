@@ -1,8 +1,12 @@
 SUMMARY = "Header-only FP16 conversion library"
-HOMEPAGE = "https://github.com/maratyszcza/fp16"
+HOMEPAGE = "https://github.com/Maratyszcza/FP16"
 LICENSE = "CLOSED"
 
-SRC_URI = "git://github.com/maratyszcza/fp16.git;protocol=https;branch=master"
+# Upstream uses Git commits rather than an explicit "2021-02-21#2" Git tag.
+# Keep the package version aligned with the requested release naming.
+PV = "2021-02-21+2"
+
+SRC_URI = "git://github.com/Maratyszcza/FP16.git;protocol=https;branch=master"
 SRCREV = "${AUTOREV}"
 
 S = "${WORKDIR}/git"
