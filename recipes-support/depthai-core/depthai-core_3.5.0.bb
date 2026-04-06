@@ -24,7 +24,8 @@ DEPENDS = " \
     libusb1 \
     fp16 \
     python3 \
-    python3-numpy\
+    python3-numpy \
+    python3-numpy-native \
     python3-pybind11 \
     lz4 \
     libarchive \
@@ -51,12 +52,13 @@ DEPENDS = " \
     xtl \
     libnop \
     "
-
+RDEPENDS:${PN} = " \
+    python3-numpy \
+    "
 EXTRA_OECMAKE += " \
     -DBUILD_SHARED_LIBS=ON \
     -DDEPTHAI_BOOTSTRAP_VCPKG=OFF \
     -DDEPTHAI_BUILD_PYTHON=ON \
-    -DFETCHCONTENT_FULLY_DISCONNECTED:BOOL=OFF \
     -DDEPTHAI_ENABLE_REMOTE_CONNECTION=OFF \
     -DDEPTHAI_JSON_EXTERNAL=ON \
     -DDEPTHAI_LIBNOP_EXTERNAL=ON \
