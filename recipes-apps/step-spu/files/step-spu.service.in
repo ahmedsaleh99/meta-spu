@@ -1,0 +1,16 @@
+[Unit]
+Description=STEP-SPU Application
+After=network-online.target xorg.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=@SPU_USER@
+Group=@SPU_USER@
+WorkingDirectory=@SPU_WORK_DIR@/src
+ExecStart=@SPU_APP@
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
