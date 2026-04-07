@@ -1,16 +1,22 @@
 [Unit]
-Description=STEP-SPU Application
-After=network-online.target xorg.service
-Wants=network-online.target
+Description=STEP-SPU Qt App
+After=xorg.service network.target
+Requires=xorg.service
 
 [Service]
-Type=simple
 User=@SPU_USER@
 Group=@SPU_USER@
-WorkingDirectory=@SPU_WORK_DIR@/src
+WorkingDirectory=@SPU_WORK_DIR@
+
+TTYPath=/dev/tty1
+Environment=DISPLAY=:0
+Environment=QT_IM_MODULE=qtvirtualkeyboard
+Environment=PYTHONDONTWRITEBYTECODE=1
+StandardOutput=journal
+StandardError=journal
 ExecStart=@SPU_APP@
 Restart=always
-RestartSec=2
+RestartSec=1
 
 [Install]
 WantedBy=multi-user.target

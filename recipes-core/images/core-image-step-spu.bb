@@ -9,4 +9,5 @@ IMAGE_INSTALL:append = " \
     step-spu \
     wificonfig \
     xorg-session \
+    python3-pyside6-fluent-widgets \
 "

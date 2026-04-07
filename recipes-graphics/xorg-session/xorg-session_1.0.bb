@@ -10,7 +10,6 @@ SRC_URI = "file://xorg.service"
 
 S = "${WORKDIR}"
 
-SPU_USER ?= "root"
 
 RDEPENDS:${PN} += " \
     xserver-xorg \
@@ -31,6 +30,13 @@ RDEPENDS:${PN} += " \
 
 SYSTEMD_SERVICE:${PN} = "xorg.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "enable"
+
+do_check_spu_user() {
+    if [ -z "${SPU_USER}" ]; then
+        bbfatal "SPU_USER must be set in the distro config"
+    fi
+}
+addtask check_spu_user after do_prepare_recipe_sysroot before do_install
 
 do_install() {
     install -d ${D}${systemd_system_unitdir}

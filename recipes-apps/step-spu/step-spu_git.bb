@@ -17,6 +17,7 @@ SRCREV = "${AUTOREV}"
 
 S = "${WORKDIR}/git"
 
+
 STEP_SPU_BRANCH ?= "main"
 STEP_SPU_INSTALL_DIR ?= "/home/${SPU_USER}/step-spu"
 STEP_SPU_CA_URL ?= ""
@@ -27,11 +28,11 @@ RDEPENDS:${PN} += " \
     bash \
     python3-core \
     python3-modules \
-    ca-certificates \
     systemd \
+    user-credentials \
 "
 
-DEPENDS += "step-cli-native"
+DEPENDS += "step-cli-native user-credentials"
 
 SYSTEMD_SERVICE:${PN} = "step-spu.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "enable"
@@ -53,9 +54,18 @@ do_fetch_root_ca() {
         --ca-url="${STEP_SPU_CA_URL}" \
         --fingerprint="${STEP_SPU_CA_FINGERPRINT}"
 }
-do_fetch_root_ca[network] = "1"
 
-addtask fetch_root_ca after do_prepare_recipe_sysroot before do_install
+do_check_spu_user() {
+    if [ -z "${SPU_USER}" ]; then
+        bbfatal "SPU_USER must be set in the distro config"
+    fi
+}
+
+
+addtask check_spu_user after do_prepare_recipe_sysroot before do_install
+
+do_fetch_root_ca[network] = "1"
+addtask do_fetch_root_ca after check_spu_user before do_install
 
 do_install() {
     install -d ${D}${STEP_SPU_INSTALL_DIR}/certs
@@ -66,7 +76,6 @@ do_install() {
     install -d ${D}${sysconfdir}/environment.d
 
     cp -r --no-preserve=ownership ${S}/src ${D}${STEP_SPU_INSTALL_DIR}/src/
-    rm -rf ${D}${STEP_SPU_INSTALL_DIR}/src/.git
 
     if [ -f ${S}/resources/test_video.mp4 ]; then
         install -m 0644 ${S}/resources/test_video.mp4 ${D}${STEP_SPU_INSTALL_DIR}/resources/test_video.mp4
@@ -77,13 +86,11 @@ do_install() {
     install -m 0755 ${S}/scripts/launch_app.sh ${D}${STEP_SPU_INSTALL_DIR}/scripts/launch_app.sh
 
     sed -e "s|@SPU_USER@|${SPU_USER}|g" \
-        -e "s|@SPU_WORK_DIR@|${STEP_SPU_INSTALL_DIR}|g" \
+        -e "s|@SPU_WORK_DIR@|${STEP_SPU_INSTALL_DIR}/src|g" \
         -e "s|@SPU_APP@|${STEP_SPU_INSTALL_DIR}/scripts/launch_app.sh|g" \
         ${WORKDIR}/step-spu.service.in > ${D}${systemd_system_unitdir}/step-spu.service
 
     install -m 0644 ${WORKDIR}/90-step-spu.conf ${D}${sysconfdir}/environment.d/90-step-spu.conf
-
-    chown -R ${SPU_USER}:${SPU_USER} ${D}${STEP_SPU_INSTALL_DIR}
 }
 
 FILES:${PN} += " \
