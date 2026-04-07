@@ -19,4 +19,5 @@ RDEPENDS:${PN} += " \
     python3-core \
     python3-darkdetect \
     python3-pyside6 \
+    python3-pysidesix-frameless-window \
 "
