@@ -40,7 +40,14 @@ addtask check_spu_user after do_prepare_recipe_sysroot before do_install
 
 do_install() {
     install -d ${D}${systemd_system_unitdir}
+    install -d ${D}${sysconfdir}/X11
     sed "s|@SPU_USER@|${SPU_USER}|g" ${WORKDIR}/xorg.service > ${D}${systemd_system_unitdir}/xorg.service
+    cat > ${D}${sysconfdir}/X11/Xwrapper.config <<'EOF'
+allowed_users=anybody
+EOF
 }
 
-FILES:${PN} += "${systemd_system_unitdir}/xorg.service"
+FILES:${PN} += " \
+    ${systemd_system_unitdir}/xorg.service \
+    ${sysconfdir}/X11/Xwrapper.config \
+"

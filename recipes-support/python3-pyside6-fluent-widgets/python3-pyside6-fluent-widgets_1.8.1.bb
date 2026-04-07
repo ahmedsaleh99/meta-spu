@@ -6,7 +6,10 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=1ebbd3e34237af26da5dc08a4e440464"
 
 inherit python_setuptools_build_meta
 
-SRC_URI = "git://github.com/zhiyiYo/PyQt-Fluent-Widgets.git;protocol=https;branch=PySide6"
+SRC_URI = " \
+    git://github.com/zhiyiYo/PyQt-Fluent-Widgets.git;protocol=https;branch=PySide6 \
+    file://0001-remove-alert-print.patch \
+"
 SRCREV = "${AUTOREV}"
 PV = "1.8.1+git${SRCPV}"
 
@@ -14,5 +17,6 @@ S = "${WORKDIR}/git"
 
 RDEPENDS:${PN} += " \
     python3-core \
+    python3-darkdetect \
     python3-pyside6 \
 "
