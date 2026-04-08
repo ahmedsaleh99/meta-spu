@@ -52,6 +52,8 @@ RDEPENDS:${PN} += " \
     python3-requests \
     depthai-core \
     depthai-core-python \
+    libcamera \
+    python3-picamera2 \
 "
 
 DEPENDS += "step-cli-native user-credentials"
@@ -113,7 +115,9 @@ do_install() {
         ${WORKDIR}/step-spu.service.in > ${D}${systemd_system_unitdir}/step-spu.service
 
     install -m 0644 ${WORKDIR}/90-step-spu.conf ${D}${sysconfdir}/environment.d/90-step-spu.conf
+    chown -R ${SPU_USER}:${SPU_USER} ${D}${STEP_SPU_INSTALL_DIR}
 }
+
 
 FILES:${PN} += " \
     /home \

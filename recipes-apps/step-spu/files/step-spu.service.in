@@ -8,9 +8,6 @@ User=@SPU_USER@
 Group=@SPU_USER@
 WorkingDirectory=@SPU_WORK_DIR@
 TTYPath=/dev/tty1
-Environment=DISPLAY=:0
-Environment=QT_IM_MODULE=qtvirtualkeyboard
-Environment=PYTHONDONTWRITEBYTECODE=1
 StandardOutput=journal
 StandardError=journal
 ExecStart=@SPU_APP@

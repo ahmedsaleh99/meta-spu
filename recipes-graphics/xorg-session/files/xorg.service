@@ -4,6 +4,8 @@ Before=step-spu.service
 After=systemd-user-sessions.service systemd-logind.service
 
 [Service]
+User=@SPU_USER@
+Group=@SPU_USER@
 Environment=DISPLAY=:0
 TTYPath=/dev/tty1
 StandardInput=tty-force
