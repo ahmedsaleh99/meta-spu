@@ -5,11 +5,13 @@ HOMEPAGE = "https://github.com/raspberrypi/picamera2"
 LICENSE = "BSD-2-Clause"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=6541a38108b5accb25bd55a14e76086d"
 
-RDEPENDS:${PN} = "python3-numbers    \
-                  python3-ctypes     \
-                  python3-colorzero  \
-                  libcamera          \
-                  libcamera-pycamera \
+RDEPENDS:${PN} = " \
+    python3-numbers \
+    python3-ctypes \
+    python3-colorzero \
+    libcamera \
+    libcamera-pycamera \
+    python3-pillow \
 "
 
 SRC_URI = "git://github.com/raspberrypi/picamera2.git;protocol=https;branch=main"
