@@ -9,7 +9,6 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 SRC_URI = " \
     git://github.com/ahmedsaleh99/STEP-SPU.git;protocol=ssh;user=git;branch=${STEP_SPU_BRANCH} \
     file://step-spu.service.in \
-    file://90-step-spu.conf \
 "
 
 PV = "1.0+git${SRCPV}"
@@ -114,7 +113,6 @@ do_install() {
         -e "s|@SPU_APP@|${STEP_SPU_INSTALL_DIR}/scripts/launch_app.sh|g" \
         ${WORKDIR}/step-spu.service.in > ${D}${systemd_system_unitdir}/step-spu.service
 
-    install -m 0644 ${WORKDIR}/90-step-spu.conf ${D}${sysconfdir}/environment.d/90-step-spu.conf
     chown -R ${SPU_USER}:${SPU_USER} ${D}${STEP_SPU_INSTALL_DIR}
 }
 
