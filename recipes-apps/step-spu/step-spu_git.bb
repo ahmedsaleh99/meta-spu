@@ -75,7 +75,7 @@ do_install() {
     install -d ${D}${systemd_system_unitdir}
     install -d ${D}${sysconfdir}/environment.d
 
-    cp -r --no-preserve=ownership ${S}/src ${D}${STEP_SPU_INSTALL_DIR}/src/
+    cp -r --no-preserve=ownership ${S}/src/* ${D}${STEP_SPU_INSTALL_DIR}/src/
 
     if [ -f ${S}/resources/test_video.mp4 ]; then
         install -m 0644 ${S}/resources/test_video.mp4 ${D}${STEP_SPU_INSTALL_DIR}/resources/test_video.mp4
