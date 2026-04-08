@@ -4,15 +4,15 @@ Before=step-spu.service
 After=systemd-user-sessions.service systemd-logind.service
 
 [Service]
-User=@SPU_USER@
-Group=@SPU_USER@
-SupplementaryGroups=tty video render input
 Environment=DISPLAY=:0
 TTYPath=/dev/tty1
-StandardInput=tty
+StandardInput=tty-force
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
 StandardOutput=journal
 StandardError=journal
-ExecStart=/usr/bin/Xorg :0 vt3 -keeptty -nolisten tcp -noreset -ac
+ExecStart=/usr/bin/Xorg :0 vt1 -keeptty -nolisten tcp -noreset -ac
 Restart=always
 RestartSec=2
 

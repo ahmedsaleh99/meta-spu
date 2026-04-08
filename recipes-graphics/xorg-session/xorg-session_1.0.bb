@@ -31,23 +31,11 @@ RDEPENDS:${PN} += " \
 SYSTEMD_SERVICE:${PN} = "xorg.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "enable"
 
-do_check_spu_user() {
-    if [ -z "${SPU_USER}" ]; then
-        bbfatal "SPU_USER must be set in the distro config"
-    fi
-}
-addtask check_spu_user after do_prepare_recipe_sysroot before do_install
-
 do_install() {
     install -d ${D}${systemd_system_unitdir}
-    install -d ${D}${sysconfdir}/X11
-    sed "s|@SPU_USER@|${SPU_USER}|g" ${WORKDIR}/xorg.service > ${D}${systemd_system_unitdir}/xorg.service
-    cat > ${D}${sysconfdir}/X11/Xwrapper.config <<'EOF'
-allowed_users=anybody
-EOF
+    install -m 0644 ${WORKDIR}/xorg.service ${D}${systemd_system_unitdir}/xorg.service
 }
 
 FILES:${PN} += " \
     ${systemd_system_unitdir}/xorg.service \
-    ${sysconfdir}/X11/Xwrapper.config \
 "

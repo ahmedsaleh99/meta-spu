@@ -28,8 +28,30 @@ RDEPENDS:${PN} += " \
     bash \
     python3-core \
     python3-modules \
-    systemd \
-    user-credentials \
+    python3-smbus2 \
+    python3-gpiod \
+    python3-qtawesome \
+    python3-av \
+    python3-loguru \
+    python3-boto3 \
+    python3-pyside6 \
+    python3-shiboken6 \
+    qtbase \
+    qtbase-plugins \
+    qtvirtualkeyboard \
+    qtvirtualkeyboard-plugins \
+    qtvirtualkeyboard-qmlplugins \
+    qtwebengine \
+    qtwebengine-plugins \
+    python3-pyside6-fluent-widgets \
+    python3-opencv \
+    python3-cryptography \
+    python3-markdown \
+    python3-psutil \
+    python3-pydantic \
+    python3-requests \
+    depthai-core \
+    depthai-core-python \
 "
 
 DEPENDS += "step-cli-native user-credentials"
