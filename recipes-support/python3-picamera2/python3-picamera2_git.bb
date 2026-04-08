@@ -6,12 +6,19 @@ LICENSE = "BSD-2-Clause"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=6541a38108b5accb25bd55a14e76086d"
 
 RDEPENDS:${PN} = " \
+    python3-av \
     python3-numbers \
     python3-ctypes \
     python3-colorzero \
+    python3-jsonschema \
+    python3-libarchive-c \
     libcamera \
     libcamera-pycamera \
+    python3-numpy \
     python3-pillow \
+    python3-prctl \
+    python3-tqdm \
+    python3-videodev2 \
 "
 
 SRC_URI = "git://github.com/raspberrypi/picamera2.git;protocol=https;branch=main"
