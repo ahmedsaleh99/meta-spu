@@ -118,7 +118,6 @@ do_install() {
 
 
 FILES:${PN} += " \
-    /home \
     ${STEP_SPU_INSTALL_DIR} \
     ${STEP_SPU_INSTALL_DIR}/* \
     ${systemd_system_unitdir}/step-spu.service \
