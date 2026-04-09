@@ -4,7 +4,7 @@ Custom Yocto layer for STEP-SPU.
 
 This layer now carries:
 - image content in recipes like [core-image-step-spu.bb](/mnt/docker-data/yocto_build/meta-spu/recipes-core/images/core-image-step-spu.bb)
-- Raspberry Pi machine policy in [step-spu-rpi5.conf](/mnt/docker-data/yocto_build/meta-spu/conf/machine/step-spu-rpi5.conf)
+- Raspberry Pi machine policy in [spu-rpi5.conf](/mnt/docker-data/yocto_build/meta-spu/conf/machine/spu-rpi5.conf)
 - shared Raspberry Pi settings in [spu-raspberrypi.inc](/mnt/docker-data/yocto_build/meta-spu/conf/machine/include/spu-raspberrypi.inc)
 - distro-level build workarounds in [step-spu.conf](/mnt/docker-data/yocto_build/meta-spu/conf/distro/step-spu.conf) and [spu-workarounds.inc](/mnt/docker-data/yocto_build/meta-spu/conf/distro/include/spu-workarounds.inc)
 - local support recipes for the STEP-SPU stack, including Picamera2-related Python packages
@@ -14,7 +14,7 @@ This layer now carries:
 To use the layer-managed machine and distro configuration, build with:
 
 ```conf
-MACHINE = "step-spu-rpi5"
+MACHINE = "spu-rpi5"
 DISTRO = "step-spu"
 ```
 
@@ -54,7 +54,7 @@ When using the example above, make sure your `kas` file sets:
 ```yaml
 local_conf_header:
   machine: |
-    MACHINE = "step-spu-rpi5"
+    MACHINE = "spu-rpi5"
   distro: |
     DISTRO = "step-spu"
 ```

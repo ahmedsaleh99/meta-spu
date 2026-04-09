@@ -1,6 +1,8 @@
 RPI_USE_U_BOOT:rpi = "1"
 ENABLE_I2C:rpi = "1"
 KERNEL_MODULE_AUTOLOAD:rpi += " i2c-dev "
+RPI_EXTRA_CONFIG:append = "\ndtparam=i2c1=on"
+RPI_EXTRA_CONFIG:append = "\ndtparam=i2c_arm=on"
 RPI_EXTRA_CONFIG:append = "\ndisplay_auto_detect=1\n"
 RPI_EXTRA_CONFIG:append = "\nusb_max_current_enable=1"
 RPI_EXTRA_CONFIG:append = "\ndtoverlay=vc4-kms-dsi-ili9881-7inch,rotation=270"
