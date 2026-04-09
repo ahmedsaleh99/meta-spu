@@ -5,6 +5,8 @@ inherit core-image
 
 IMAGE_INSTALL:append = " \
     ca-certificates \
+    chrony \
+    fake-hwclock \
     fontconfig \
     i2c-tools \
     python3 \
