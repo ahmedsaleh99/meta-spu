@@ -1,94 +1,65 @@
-# meta-spu-custom
+# meta-spu
 
-Custom meta-layer for STEP-SPU Yocto distribution providing local recipes and configuration.
+Custom Yocto layer for STEP-SPU.
 
-## Structure
+This layer now carries:
+- image content in recipes like [core-image-step-spu.bb](/mnt/docker-data/yocto_build/meta-spu/recipes-core/images/core-image-step-spu.bb)
+- Raspberry Pi machine policy in [step-spu-rpi5.conf](/mnt/docker-data/yocto_build/meta-spu/conf/machine/step-spu-rpi5.conf)
+- shared Raspberry Pi settings in [spu-raspberrypi.inc](/mnt/docker-data/yocto_build/meta-spu/conf/machine/include/spu-raspberrypi.inc)
+- distro-level build workarounds in [step-spu.conf](/mnt/docker-data/yocto_build/meta-spu/conf/distro/step-spu.conf) and [spu-workarounds.inc](/mnt/docker-data/yocto_build/meta-spu/conf/distro/include/spu-workarounds.inc)
+- local support recipes for the STEP-SPU stack, including Picamera2-related Python packages
 
+## Recommended Build Settings
+
+To use the layer-managed machine and distro configuration, build with:
+
+```conf
+MACHINE = "step-spu-rpi5"
+DISTRO = "step-spu"
 ```
-meta-spu-custom/
-├── conf/
-│   └── layer.conf          # Layer configuration for Bitbake
-├── recipes-graphics/
-│   └── plymouth/
-│       └── plymouth-theme-spu-splash_1.0.bb  # Plymouth theme recipe
-└── README.md               # This file
-```
 
-## Recipes
+If you are using `kas`, put those in `local_conf_header` in your `kas` file.
 
-### plymouth-theme-spu-splash
+## Raspberry Pi Policy
 
-**Purpose:** Packages and installs the SPU custom Plymouth splash theme
+The Raspberry Pi include currently enables:
+- U-Boot on Raspberry Pi machines
+- I2C support and `i2c-dev` autoload
+- extra firmware config for display autodetect
+- USB current enable
+- the `vc4-kms-dsi-ili9881-7inch` DSI overlay with `rotation=270`
 
-**Files Included:**
-- `spu-splash.plymouth` - Theme metadata configuration
-- `spu-splash.script` - Plymouth theme script (controls animation/display)
-- `SPU-Logo.png` - Splash screen image asset
+The image recipe also installs `i2c-tools`.
 
-**Installation Path:** `/usr/share/plymouth/themes/spu-splash/`
+## Python/Camera Notes
 
-**Auto-set Default:** The recipe automatically sets this as the default Plymouth theme via post-install script
+Picamera2 in this layer depends on several local recipes such as:
+- `python3-pidng`
+- `python3-piexif`
+- `python3-simplejpeg`
+- `python3-openexr`
 
-**Dependencies:**
-- `plymouth` (runtime and build-time)
+For DRM preview support, this layer also adds an alias so the existing `kmsxx-python`
+package can satisfy names like `python3-pykms`.
 
-## Integration with KAS
-
-The layer is integrated into `scripts/kas/step-spu.yaml`:
-
-1. **Layer Registration:**
-   ```yaml
-   repos:
-     meta-spu-custom:
-       path: ../../meta-spu-custom
-       layers:
-         .:
-   ```
-
-2. **Recipe Installation:**
-   ```yaml
-   IMAGE_INSTALL:append = "plymouth-theme-spu-splash"
-   ```
-
-3. **Theme Configuration:**
-   ```yaml
-   SPLASH = "plymouth"
-   PACKAGECONFIG:pn-plymouth = "pango drm udev systemd"
-   PLYMOUTH_DEFAULT_THEME = "spu-splash"
-   APPEND:append = " quiet splash"
-   ```
-
-## Building
-
-The theme is automatically built when you run:
+## Build Example
 
 ```bash
-cd /home/Shared/assale02/STEP-SPU
-KAS_WORK_DIR=/mnt/docker-data/yocto_build kas-container build ./scripts/kas/step-spu.yaml
+export KAS_WORK_DIR=/mnt/docker-data/yocto_build
+kas-container --ssh-dir $HOME/.ssh build ./scripts/kas/step-spu.yaml
 ```
 
-## Customization
+When using the example above, make sure your `kas` file sets:
 
-To customize the theme:
-
-1. **Edit Theme Script:**
-   - Modify `recipes-graphics/plymouth/spu-splash.script` for display logic
-
-2. **Update Theme Config:**
-   - Edit `recipes-graphics/plymouth/spu-splash.plymouth` for metadata
-
-3. **Replace Logo:**
-   - Swap `SPU-Logo.png` with your custom image (keep same filename)
-
-4. **Update Recipe:**
-   - Modify `recipes-graphics/plymouth/plymouth-theme-spu-splash_1.0.bb` if adding new files
+```yaml
+local_conf_header:
+  machine: |
+    MACHINE = "step-spu-rpi5"
+  distro: |
+    DISTRO = "step-spu"
+```
 
 ## Layer Compatibility
 
-- **Yocto Version:** scarthgap
-- **Bitbake Priority:** 6
-- **Dependencies:** meta-openembedded, openembedded-core
-
-## Footer
-
-Created as part of STEP-SPU Yocto build configuration.
+- Yocto series: `scarthgap`
+- Layer name: `meta-spu`

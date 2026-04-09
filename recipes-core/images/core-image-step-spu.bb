@@ -5,6 +5,7 @@ inherit core-image
 IMAGE_INSTALL:append = " \
     ca-certificates \
     fontconfig \
+    i2c-tools \
     python3 \
     python3-modules \
     python3-packaging \
