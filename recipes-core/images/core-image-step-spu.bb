@@ -9,6 +9,8 @@ IMAGE_INSTALL:append = " \
     python3 \
     python3-modules \
     python3-packaging \
+    networkmanager-nmcli \
+    networkmanager-wifi \
     ttf-dejavu-sans \
     ttf-dejavu-sans-mono \
     ttf-dejavu-serif \
