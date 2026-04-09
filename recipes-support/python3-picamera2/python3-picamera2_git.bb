@@ -14,11 +14,16 @@ RDEPENDS:${PN} = " \
     python3-libarchive-c \
     libcamera \
     libcamera-pycamera \
+    kmsxx-python \
     python3-numpy \
+    python3-openexr \
+    python3-pidng \
     python3-pillow \
     python3-prctl \
     python3-tqdm \
     python3-videodev2 \
+    python3-piexif \
+    python3-simplejpeg \
 "
 
 SRC_URI = "git://github.com/raspberrypi/picamera2.git;protocol=https;branch=main"
