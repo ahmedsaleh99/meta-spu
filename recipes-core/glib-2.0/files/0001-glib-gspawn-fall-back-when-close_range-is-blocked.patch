@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+Date: Sun, 5 Apr 2026 16:05:00 -0400
+Subject: [PATCH] glib: gspawn: fall back when close_range is blocked
+
+When glib native tools run inside Docker or kas-container, seccomp can
+reject close_range() with EPERM even though the syscall exists in libc.
+Treat that the same way as ENOSYS/EINVAL and fall back to the fd-walk
+implementation so helper tools such as glib-compile-resources keep
+working during native builds.
+
+Upstream-Status: Inappropriate [container compatibility workaround]
+---
+ glib/gspawn.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/glib/gspawn.c b/glib/gspawn.c
+index 4f3d13f..9b2a0a1 100644
+--- a/glib/gspawn.c
++++ b/glib/gspawn.c
+@@ -1611,7 +1611,7 @@ safe_fdwalk_set_cloexec (int lowfd)
+    * fall back to safe_fdwalk(). Handle EINVAL in case `CLOSE_RANGE_CLOEXEC`
+    * is not supported. */
+   ret = close_range (lowfd, G_MAXUINT, CLOSE_RANGE_CLOEXEC);
+-  if (ret == 0 || !(errno == ENOSYS || errno == EINVAL))
++  if (ret == 0 || !(errno == ENOSYS || errno == EINVAL || errno == EPERM))
+     return ret;
+ #endif  /* HAVE_CLOSE_RANGE */
+ 
+@@ -1638,8 +1638,8 @@ safe_closefrom (int lowfd)
+    *
+    * Handle ENOSYS in case it’s supported in libc but not the kernel; if so,
+    * fall back to safe_fdwalk(). */
+-  ret = close_range (lowfd, G_MAXUINT, 0);
+-  if (ret == 0 || errno != ENOSYS)
++  ret = close_range (lowfd, G_MAXUINT, 0);  /* Docker seccomp can return EPERM here */
++  if (ret == 0 || !(errno == ENOSYS || errno == EPERM))
+     return ret;
+ #endif  /* HAVE_CLOSE_RANGE */
+ 
+-- 
+2.43.0

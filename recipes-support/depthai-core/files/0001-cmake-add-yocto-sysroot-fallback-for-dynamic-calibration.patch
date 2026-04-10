@@ -1,0 +1,52 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+Subject: [PATCH] cmake: add Yocto sysroot fallback for dynamic calibration
+
+Upstream can consume dynamic_calibration from a local or remote zip via
+FetchContent, but in Yocto builds FetchContent may leave the extracted
+tree unavailable during configure. Fall back to the already-staged
+sysroot library and headers so dynamic calibration support can still be
+enabled.
+---
+ cmake/depthaiDependencies.cmake | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/cmake/depthaiDependencies.cmake b/cmake/depthaiDependencies.cmake
+--- a/cmake/depthaiDependencies.cmake
++++ b/cmake/depthaiDependencies.cmake
+@@ -274,12 +274,22 @@ if(DEPTHAI_DYNAMIC_CALIBRATION_SUPPORT)
+         endif()
+     else()
+         # On non-Windows platforms, search for the release version of the library
++        find_path(DYNAMIC_CALIBRATION_INCLUDE_DIR DynamicCalibration.hpp
++            PATHS
++                ${DYNAMIC_CALIBRATION_DIR}/include
++                ${CMAKE_SYSROOT}/usr/include
++                ${CMAKE_FIND_ROOT_PATH}/usr/include
++            NO_DEFAULT_PATH
++        )
+         find_library(DYNAMIC_CALIBRATION_RELEASE dynamic_calibration
+-            PATHS ${DYNAMIC_CALIBRATION_DIR}/lib
++            PATHS
++                ${DYNAMIC_CALIBRATION_DIR}/lib
++                ${CMAKE_SYSROOT}/usr/lib
++                ${CMAKE_FIND_ROOT_PATH}/usr/lib
+             NO_DEFAULT_PATH
+         )
+-        if(NOT DYNAMIC_CALIBRATION_RELEASE)
+-            message(FATAL_ERROR "Dynamic Calibration library not found, disable support by setting DEPTHAI_DYNAMIC_CALIBRATION_SUPPORT to OFF")
++        if(NOT DYNAMIC_CALIBRATION_RELEASE OR NOT DYNAMIC_CALIBRATION_INCLUDE_DIR)
++            message(FATAL_ERROR "Dynamic Calibration library or headers not found, disable support by setting DEPTHAI_DYNAMIC_CALIBRATION_SUPPORT to OFF")
+         endif()
+     endif()
+ 
+@@ -331,7 +341,7 @@ if(DEPTHAI_DYNAMIC_CALIBRATION_SUPPORT)
+             IMPORTED_LOCATION_RELWITHDEBINFO "${DYNAMIC_CALIBRATION_RELEASE}"
+             IMPORTED_LOCATION_MINSIZEREL "${DYNAMIC_CALIBRATION_RELEASE}"
+             IMPORTED_CONFIGURATIONS "DEBUG;RELEASE;RELWITHDEBINFO;MINSIZEREL"
+-            INTERFACE_INCLUDE_DIRECTORIES "${DYNAMIC_CALIBRATION_DIR}/include"
++            INTERFACE_INCLUDE_DIRECTORIES "${DYNAMIC_CALIBRATION_INCLUDE_DIR}"
+         )
+     endif()
+ endif()
+-- 
+2.34.1

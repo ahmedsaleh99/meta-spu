@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+Subject: [PATCH] cmake: fix XLinkPublic propagation for depthai-core
+
+DepthAI compiles against XLink public headers, so the XLinkPublic target
+must contribute both its include directories and a real build dependency
+to the core target.
+---
+ CMakeLists.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -768,6 +768,7 @@ target_include_directories(${TARGET_CORE_NAME}
+ target_include_directories(${TARGET_CORE_NAME} SYSTEM
+     PUBLIC
+         "$<BUILD_INTERFACE:${DEPTHAI_SHARED_3RDPARTY_INCLUDE}>"
++        "$<TARGET_PROPERTY:XLinkPublic,INTERFACE_INCLUDE_DIRECTORIES>"
+ )
+ 
+ # Add clang format after specifying include directories
+@@ -830,7 +831,7 @@ target_link_libraries(${TARGET_CORE_NAME}
+     PUBLIC
+         nlohmann_json::nlohmann_json
+         libnop
+-    INTERFACE
++    PUBLIC
+         XLinkPublic
+     PRIVATE
+         fmt::fmt
+-- 
+2.34.1

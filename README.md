@@ -1,97 +1,65 @@
 # meta-spu
 
-## Overview
+Custom Yocto layer for STEP-SPU.
 
-`meta-spu` is a custom [Yocto Project](https://www.yoctoproject.org/) layer designed to build a Linux image for the **STEP-SPU** board. It provides board-specific configurations, recipes, and customizations needed to produce a tailored embedded Linux image for the STEP-SPU hardware platform.
+This layer now carries:
+- image content in recipes like [core-image-step-spu.bb](/mnt/docker-data/yocto_build/meta-spu/recipes-core/images/core-image-step-spu.bb)
+- Raspberry Pi machine policy in [spu-rpi5.conf](/mnt/docker-data/yocto_build/meta-spu/conf/machine/spu-rpi5.conf)
+- shared Raspberry Pi settings in [spu-raspberrypi.inc](/mnt/docker-data/yocto_build/meta-spu/conf/machine/include/spu-raspberrypi.inc)
+- distro-level build workarounds in [step-spu.conf](/mnt/docker-data/yocto_build/meta-spu/conf/distro/step-spu.conf) and [spu-workarounds.inc](/mnt/docker-data/yocto_build/meta-spu/conf/distro/include/spu-workarounds.inc)
+- local support recipes for the STEP-SPU stack, including Picamera2-related Python packages
 
-## Dependencies
+## Recommended Build Settings
 
-This layer depends on:
+To use the layer-managed machine and distro configuration, build with:
 
-- **poky** – the Yocto Project reference distribution  
-- **meta-openembedded** – a collection of additional OpenEmbedded layers
+```conf
+MACHINE = "spu-rpi5"
+DISTRO = "step-spu"
+```
 
-## Supported Release Series
+If you are using `kas`, put those in `local_conf_header` in your `kas` file.
 
-- `scarthgap`
+## Raspberry Pi Policy
 
-## Provided Recipes
+The Raspberry Pi include currently enables:
+- U-Boot on Raspberry Pi machines
+- I2C support and `i2c-dev` autoload
+- extra firmware config for display autodetect
+- USB current enable
+- the `vc4-kms-dsi-ili9881-7inch` DSI overlay with `rotation=270`
 
-- Image: `step-spu-image`
-- Packagegroup: `packagegroup-step-spu`
-- App payload: `step-spu`
-- System config: `step-spu-config`
-- Kiosk tweaks: `step-spu-kiosk-tweaks`
+The image recipe also installs `i2c-tools`.
 
-## Notes
+## Python/Camera Notes
 
-- `step-spu` fetches application payload from:
-  - `https://github.com/ahmedsaleh99/STEP-SPU` (`main` branch)
-- The recipe pins a commit with `SRCREV` for reproducible builds.
-  Update `SRCREV` in `recipes-spu/step-spu/step-spu.bb` when you want a newer app revision.
-- Wi-Fi seed values can be controlled with:
-  - `SPU_WIFI_SSID`
-  - `SPU_WIFI_PSK`
+Picamera2 in this layer depends on several local recipes such as:
+- `python3-pidng`
+- `python3-piexif`
+- `python3-simplejpeg`
+- `python3-openexr`
 
-## Getting Started
+For DRM preview support, this layer also adds an alias so the existing `kmsxx-python`
+package can satisfy names like `python3-pykms`.
 
-### 1. Clone the required layers
+## Build Example
 
 ```bash
-git clone https://git.yoctoproject.org/poky
-git clone https://github.com/openembedded/meta-openembedded
-git clone https://github.com/ahmedsaleh99/meta-spu
+export KAS_WORK_DIR=/mnt/docker-data/yocto_build
+kas-container --ssh-dir $HOME/.ssh build ./scripts/kas/step-spu.yaml
 ```
 
-### 2. Initialize the build environment
+When using the example above, make sure your `kas` file sets:
 
-```bash
-source poky/oe-init-build-env build
+```yaml
+local_conf_header:
+  machine: |
+    MACHINE = "spu-rpi5"
+  distro: |
+    DISTRO = "step-spu"
 ```
 
-### 3. Add the layer to your build
+## Layer Compatibility
 
-Edit `conf/bblayers.conf` to include the `meta-spu` layer:
-
-```
-BBLAYERS += "/path/to/meta-spu"
-```
-
-### 4. Set the machine
-
-Edit `conf/local.conf`:
-
-```
-MACHINE = "step-spu"
-```
-
-### 5. Build the image
-
-```bash
-bitbake core-image-minimal
-```
-
-## Layer Structure
-
-```
-meta-spu/
-├── conf/
-│   ├── layer.conf          # Layer configuration
-│   └── machine/            # Machine configuration files
-├── recipes-core/           # Core system recipes and customizations
-├── recipes-kernel/         # Linux kernel recipes and patches
-└── README.md
-```
-
-## Contributing
-
-Contributions are welcome. Please open an issue or submit a pull request on the [GitHub repository](https://github.com/ahmedsaleh99/meta-spu).
-
-## License
-
-This layer is provided under the terms described in the [LICENSE](LICENSE) file.
-
-
-## Maintainers
-
-- STEP-SPU Team
+- Yocto series: `scarthgap`
+- Layer name: `meta-spu`
