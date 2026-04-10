@@ -22,7 +22,10 @@ do_install() {
         install -d ${D}${sysconfdir}/default
         install -m 0644 ${S}/etc/default/fake-hwclock ${D}${sysconfdir}/default/fake-hwclock
     fi
-    date -u '+%Y-%m-%d %H:%M:%S' > "${D}${sysconfdir}/fake-hwclock.data"
+    if [ -z "${FAKE_HWCLOCK_DATE}" ]; then
+        bbfatal "FAKE_HWCLOCK_DATE must be set"
+    fi
+    date -u -d "${FAKE_HWCLOCK_DATE}" '+%Y-%m-%d %H:%M:%S' > "${D}${sysconfdir}/fake-hwclock.data"
 
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${S}/debian/fake-hwclock-load.service ${D}${systemd_system_unitdir}/fake-hwclock-load.service
