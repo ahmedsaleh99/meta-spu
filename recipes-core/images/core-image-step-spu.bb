@@ -23,8 +23,10 @@ IMAGE_INSTALL:append = " \
     wificonfig \
     systemd \
     plymouth \
+    tzdata \
     xorg-session \
     step-spu \
 "
 
 EXTRA_IMAGE_FEATURES:append = " splash"
+EXTRA_IMAGE_FEATURES:append = " ssh-server-openssh debug-tweaks"
