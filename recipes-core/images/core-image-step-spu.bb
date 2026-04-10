@@ -29,4 +29,3 @@ IMAGE_INSTALL:append = " \
 "
 
 EXTRA_IMAGE_FEATURES:append = " splash"
-EXTRA_IMAGE_FEATURES:append = " ssh-server-openssh debug-tweaks"
