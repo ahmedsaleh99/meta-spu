@@ -14,6 +14,8 @@ IMAGE_INSTALL:append = " \
     python3-packaging \
     networkmanager-nmcli \
     networkmanager-wifi \
+    rpi-eeprom \
+    rpi-eeprom-defaults \
     ttf-dejavu-sans \
     ttf-dejavu-sans-mono \
     ttf-dejavu-serif \
