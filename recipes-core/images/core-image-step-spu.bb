@@ -27,4 +27,4 @@ IMAGE_INSTALL:append = " \
     step-spu \
 "
 
-EXTRA_IMAGE_FEATURES:append = " ssh-server-openssh splash debug-tweaks"
+EXTRA_IMAGE_FEATURES:append = " splash"
