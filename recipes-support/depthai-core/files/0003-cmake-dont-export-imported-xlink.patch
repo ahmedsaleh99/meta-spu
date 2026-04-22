@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+Subject: [PATCH] cmake: don't export imported XLink target
+
+When Yocto provides XLink through `find_package(XLink CONFIG)`, the
+`XLink` target is imported rather than built as part of depthai-core.
+Upstream currently appends `XLink` to `targets_to_export` for static
+builds unconditionally, which makes `export()` and `install(TARGETS ...)`
+fail during python-enabled builds:
+
+  export given target "XLink" which is not built by this project
+
+Only export/install `XLink` when it is a non-imported target created by
+the current build.
+---
+ CMakeLists.txt | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1277,7 +1277,14 @@ include(CMakePackageConfigHelpers)
+ 
+ # Add additional targets to export group
+ if(NOT BUILD_SHARED_LIBS)
+-    list(APPEND targets_to_export ${DEPTHAI_RESOURCE_LIBRARY_NAME} cmrc-base XLink)
++    list(APPEND targets_to_export ${DEPTHAI_RESOURCE_LIBRARY_NAME} cmrc-base)
++    if(TARGET XLink)
++        get_target_property(_depthai_xlink_imported XLink IMPORTED)
++        if(NOT _depthai_xlink_imported)
++            list(APPEND targets_to_export XLink)
++        endif()
++        unset(_depthai_xlink_imported)
++    endif()
+     if(DEPTHAI_ENABLE_PROTOBUF)
+         list(APPEND targets_to_export messages)
+     endif()
+-- 
+2.34.1

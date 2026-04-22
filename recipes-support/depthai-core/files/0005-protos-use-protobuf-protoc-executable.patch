@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+Subject: [PATCH] protos: use Protobuf_PROTOC_EXECUTABLE for codegen
+
+Use the executable path resolved by FindProtobuf instead of invoking the
+protobuf::protoc target directly. This lets Yocto pass the staged native
+protoc binary via -DProtobuf_PROTOC_EXECUTABLE=... during cross builds.
+---
+ protos/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/protos/CMakeLists.txt b/protos/CMakeLists.txt
+--- a/protos/CMakeLists.txt
++++ b/protos/CMakeLists.txt
+@@ -33,7 +33,7 @@ foreach(proto_file ${MESSAGES_PROTOS})
+ 
+     add_custom_command(
+         OUTPUT ${generated_files}
+-        COMMAND protobuf::protoc --cpp_out=${PROTO_GEN_DIR} -I ${PROTO_DIR} ${proto_file}
++        COMMAND ${Protobuf_PROTOC_EXECUTABLE} --cpp_out=${PROTO_GEN_DIR} -I ${PROTO_DIR} ${proto_file}
+         DEPENDS ${proto_file}
+         COMMENT "Generating ${generated_files} from ${proto_file}"
+         VERBATIM
