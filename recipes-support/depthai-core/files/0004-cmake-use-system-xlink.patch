@@ -1,0 +1,55 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+Subject: [PATCH] cmake: use system XLink package in Yocto builds
+
+Replace the upstream local-or-FetchContent XLink setup with a
+find_package(XLink CONFIG) flow so depthai-core uses the Yocto-provided
+XLink package and export metadata.
+---
+ cmake/depthaiDependencies.cmake | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
+
+diff --git a/cmake/depthaiDependencies.cmake b/cmake/depthaiDependencies.cmake
+--- a/cmake/depthaiDependencies.cmake
++++ b/cmake/depthaiDependencies.cmake
+@@ -173,30 +173,22 @@
+ endif()
+ 
+ # XLink
+-# Always compile XLink as static library, even when DepthAI is built as shared
++# Use the Yocto-provided XLink package instead of FetchContent.
+ set(_BUILD_SHARED_LIBS_SAVED "${BUILD_SHARED_LIBS}")
+ set(BUILD_SHARED_LIBS OFF)
+-set(XLINK_ENABLE_LIBUSB ${DEPTHAI_ENABLE_LIBUSB} CACHE BOOL "Enable libusb" FORCE)
+-set(XLINK_INSTALL_PUBLIC_ONLY ON CACHE BOOL "Install only public headers" FORCE)
+ if(DEPTHAI_ENABLE_LIBUSB)
+     find_package(usb-1.0 ${_QUIET} CONFIG REQUIRED)
+ endif()
+-if(DEPTHAI_XLINK_LOCAL AND (NOT CONFIG_MODE))
+-    add_subdirectory("${DEPTHAI_XLINK_LOCAL}" ${CMAKE_CURRENT_BINARY_DIR}/XLink)
+-else()
+-    FetchContent_Declare(
+-        XLink
+-        GIT_REPOSITORY https://github.com/luxonis/XLink.git
+-        GIT_TAG        f001d710be6a4010db913510da08caaa3a58466c
+-    )
+-
+-    FetchContent_MakeAvailable(
+-        XLink
+-    )
+-endif()
++find_package(XLink ${_QUIET} CONFIG REQUIRED)
+ set(BUILD_SHARED_LIBS "${_BUILD_SHARED_LIBS_SAVED}")
+ unset(_BUILD_SHARED_LIBS_SAVED)
+-list(APPEND targets_to_export XLinkPublic)
++if(TARGET XLinkPublic)
++    get_target_property(_depthai_xlinkpublic_imported XLinkPublic IMPORTED)
++    if(NOT _depthai_xlinkpublic_imported)
++        list(APPEND targets_to_export XLinkPublic)
++    endif()
++    unset(_depthai_xlinkpublic_imported)
++endif()
+ 
+ # OpenCV 4 - (optional)
+ message("DEPTHAI_OPENCV_SUPPORT: ${DEPTHAI_OPENCV_SUPPORT}")
+-- 
+2.34.1
