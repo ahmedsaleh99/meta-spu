@@ -18,7 +18,7 @@ S = "${WORKDIR}/git"
 
 
 STEP_SPU_BRANCH ?= "main"
-STEP_SPU_INSTALL_DIR ?= "/home/${SPU_USER}/step-spu"
+STEP_SPU_INSTALL_DIR ?= "/data/step-spu"
 STEP_SPU_CA_URL ?= ""
 STEP_SPU_CA_FINGERPRINT ?= ""
 STEP_SPU_ROOT_CA_CERT ?= "${WORKDIR}/root_ca.crt"
