@@ -19,6 +19,7 @@ S = "${WORKDIR}/git"
 
 STEP_SPU_BRANCH ?= "main"
 STEP_SPU_INSTALL_DIR ?= "/home/${SPU_USER}/step-spu"
+STEP_SPU_DATA_DIR ?= "/data/step-spu"
 STEP_SPU_CA_URL ?= ""
 STEP_SPU_CA_FINGERPRINT ?= ""
 STEP_SPU_ROOT_CA_CERT ?= "${WORKDIR}/root_ca.crt"
@@ -91,13 +92,14 @@ do_fetch_root_ca[network] = "1"
 addtask do_fetch_root_ca after check_spu_user before do_install
 
 do_install() {
-    install -d ${D}${STEP_SPU_INSTALL_DIR}/src
-    install -d ${D}${STEP_SPU_INSTALL_DIR}/resources
-    install -d ${D}${STEP_SPU_INSTALL_DIR}/scripts
-    install -d ${D}${datadir}/step-spu/certs
-    install -d ${D}${datadir}/step-spu/encrypted_frames
-    install -d ${D}${systemd_system_unitdir}
-    install -d ${D}${sysconfdir}/environment.d
+    install -d \
+        ${D}${STEP_SPU_INSTALL_DIR}/src \
+        ${D}${STEP_SPU_INSTALL_DIR}/resources \
+        ${D}${STEP_SPU_INSTALL_DIR}/scripts \
+        ${D}${STEP_SPU_DATA_DIR}/certs \
+        ${D}${STEP_SPU_DATA_DIR}/encrypted_frames \
+        ${D}${systemd_system_unitdir} \
+        ${D}${sysconfdir}/environment.d
 
     cp -r --no-preserve=ownership ${S}/src/* ${D}${STEP_SPU_INSTALL_DIR}/src/
 
@@ -105,11 +107,10 @@ do_install() {
         install -m 0644 ${S}/resources/test_video.mp4 ${D}${STEP_SPU_INSTALL_DIR}/resources/test_video.mp4
     fi
 
-    rm -rf ${D}${STEP_SPU_INSTALL_DIR}/certs
-    ln -snf /data/step-spu/certs ${D}${STEP_SPU_INSTALL_DIR}/certs
-    rm -rf ${D}${STEP_SPU_INSTALL_DIR}/encrypted_frames
-    ln -snf /data/step-spu/encrypted_frames ${D}${STEP_SPU_INSTALL_DIR}/encrypted_frames
-    install -m 0644 ${STEP_SPU_ROOT_CA_CERT} ${D}${datadir}/step-spu/certs/root_ca.crt
+    rm -rf ${D}${STEP_SPU_INSTALL_DIR}/certs ${D}${STEP_SPU_INSTALL_DIR}/encrypted_frames
+    ln -snf ${STEP_SPU_DATA_DIR}/certs ${D}${STEP_SPU_INSTALL_DIR}/certs
+    ln -snf ${STEP_SPU_DATA_DIR}/encrypted_frames ${D}${STEP_SPU_INSTALL_DIR}/encrypted_frames
+    install -m 0644 ${STEP_SPU_ROOT_CA_CERT} ${D}${STEP_SPU_DATA_DIR}/certs/root_ca.crt
 
     install -m 0755 ${S}/scripts/launch_app.sh ${D}${STEP_SPU_INSTALL_DIR}/scripts/launch_app.sh
 
@@ -118,17 +119,15 @@ do_install() {
         -e "s|@SPU_APP@|${STEP_SPU_INSTALL_DIR}/scripts/launch_app.sh|g" \
         ${WORKDIR}/step-spu.service.in > ${D}${systemd_system_unitdir}/step-spu.service
 
-    chown -R ${SPU_USER}:${SPU_USER} ${D}${STEP_SPU_INSTALL_DIR}
-    chown -R ${SPU_USER}:${SPU_USER} ${D}${datadir}/step-spu/
-
+    chown -R ${SPU_USER}:${SPU_USER} ${D}${STEP_SPU_INSTALL_DIR} ${D}${STEP_SPU_DATA_DIR}
 }
 
 
 FILES:${PN} += " \
     ${STEP_SPU_INSTALL_DIR} \
     ${STEP_SPU_INSTALL_DIR}/* \
-    ${datadir}/step-spu/certs/root_ca.crt \
-    ${datadir}/step-spu/encrypted_frames \
+    ${STEP_SPU_DATA_DIR} \
+    ${STEP_SPU_DATA_DIR}/* \
     ${systemd_system_unitdir}/step-spu.service \
     ${sysconfdir}/environment.d/90-step-spu.conf \
 "
