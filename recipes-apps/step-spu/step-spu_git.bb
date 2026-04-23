@@ -91,10 +91,11 @@ do_fetch_root_ca[network] = "1"
 addtask do_fetch_root_ca after check_spu_user before do_install
 
 do_install() {
-    install -d ${D}${STEP_SPU_INSTALL_DIR}/certs
     install -d ${D}${STEP_SPU_INSTALL_DIR}/src
     install -d ${D}${STEP_SPU_INSTALL_DIR}/resources
     install -d ${D}${STEP_SPU_INSTALL_DIR}/scripts
+    install -d ${D}${datadir}/step-spu/certs
+    install -d ${D}${datadir}/step-spu/encrypted_frames
     install -d ${D}${systemd_system_unitdir}
     install -d ${D}${sysconfdir}/environment.d
 
@@ -104,7 +105,11 @@ do_install() {
         install -m 0644 ${S}/resources/test_video.mp4 ${D}${STEP_SPU_INSTALL_DIR}/resources/test_video.mp4
     fi
 
-    install -m 0644 ${STEP_SPU_ROOT_CA_CERT} ${D}${STEP_SPU_INSTALL_DIR}/certs/root_ca.crt
+    rm -rf ${D}${STEP_SPU_INSTALL_DIR}/certs
+    ln -snf /data/step-spu/certs ${D}${STEP_SPU_INSTALL_DIR}/certs
+    rm -rf ${D}${STEP_SPU_INSTALL_DIR}/encrypted_frames
+    ln -snf /data/step-spu/encrypted_frames ${D}${STEP_SPU_INSTALL_DIR}/encrypted_frames
+    install -m 0644 ${STEP_SPU_ROOT_CA_CERT} ${D}${datadir}/step-spu/certs/root_ca.crt
 
     install -m 0755 ${S}/scripts/launch_app.sh ${D}${STEP_SPU_INSTALL_DIR}/scripts/launch_app.sh
 
@@ -114,12 +119,16 @@ do_install() {
         ${WORKDIR}/step-spu.service.in > ${D}${systemd_system_unitdir}/step-spu.service
 
     chown -R ${SPU_USER}:${SPU_USER} ${D}${STEP_SPU_INSTALL_DIR}
+    chown -R ${SPU_USER}:${SPU_USER} ${D}${datadir}/step-spu/
+
 }
 
 
 FILES:${PN} += " \
     ${STEP_SPU_INSTALL_DIR} \
     ${STEP_SPU_INSTALL_DIR}/* \
+    ${datadir}/step-spu/certs/root_ca.crt \
+    ${datadir}/step-spu/encrypted_frames \
     ${systemd_system_unitdir}/step-spu.service \
     ${sysconfdir}/environment.d/90-step-spu.conf \
 "
