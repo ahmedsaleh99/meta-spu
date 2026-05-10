@@ -5,7 +5,7 @@ LICENSE = "CLOSED"
 
 inherit allarch
 
-DEPENDS = "ca-certificates step-cli-native"
+DEPENDS = "step-cli-native"
 RDEPENDS:${PN} = "ca-certificates"
 
 S = "${WORKDIR}"
